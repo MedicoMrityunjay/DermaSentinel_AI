@@ -11,28 +11,6 @@ license: mit
 
 # DermaSentinel: Clinical-Grade AI for Melanoma Detection
 
-## 🚀 Main Findings
-
-DermaSentinel bridges the gap between black-box AI and clinical practice by offering:
-1.  **Precision Diagnosis**: A dual-gate architecture (Segmentation + Classification) for high-accuracy lesion analysis.
-2.  **Explainability**: Real-time quantification of the **ABCD Rule** (Asymmetry, Border, Color) and visual segmentation overlays.
-3.  **Equity**: An integrated **Equity Engine** that analyzes skin tone (ITA Score) to ensure fair performance across diverse skin phenotypes.
-4.  **Workflow Integration**: Automated **AI Scribe** for clinical note generation and PDF reporting.
-
----
-
-## 📦 Dependencies
-
-To clone all files:
-
-```bash
-git clone https://github.com/MedicoMrityunjay/DermaSentinel_AI.git
-cd DermaSentinel_AI
-```
-
-To install Python dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
 
