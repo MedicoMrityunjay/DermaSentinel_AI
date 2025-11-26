@@ -9,116 +9,159 @@ pinned: true
 license: mit
 ---
 
-# DermaSentinel: Clinical-Grade AI for Melanoma Detection
+<div align="center">
 
-pip install -r requirements.txt
+# 🛡️ DermaSentinel AI
+### *Clinical-Grade Melanoma Detection & Analysis System*
+
+[![Status](https://img.shields.io/badge/Status-Gold%20Master%20v3.0-gold?style=for-the-badge&logo=github)](https://github.com/MedicoMrityunjay/DermaSentinel_AI/releases)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Live%20Demo-blue?style=for-the-badge)](https://huggingface.co/spaces/medicomrityunjay/DermaSentinel)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker)](https://hub.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?style=flat-square&logo=pytorch&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.95+-009688?style=flat-square&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OpenCV-Computer%20Vision-5C3EE8?style=flat-square&logo=opencv&logoColor=white"/>
+</p>
+
+---
+
+### � **[Launch Live Demo](https://huggingface.co/spaces/medicomrityunjay/DermaSentinel)**
+*Experience the full clinical workflow directly in your browser.*
+
+---
+
+</div>
+
+## 🧠 System Architecture: The "Dual-Gate" Pipeline
+
+DermaSentinel employs a novel **Dual-Gate Architecture** that decouples segmentation from classification for maximum explainability and precision.
+
+```mermaid
+graph TD
+    subgraph Input
+    IMG[Input Image] --> PRE[Preprocessing]
+    META[Patient Metadata] --> FUSION
+    end
+
+    subgraph "Gate 1: The Scalpel 🗡️"
+    PRE --> UNET[U-Net (ResNet34)]
+    UNET --> MASK[Segmentation Mask]
+    MASK --> ABCD[ABCD Analysis]
+    end
+
+    subgraph "Gate 2: The Fusion ⚛️"
+    PRE --> EFF[EfficientNet-B3]
+    EFF --> EMB[Image Embeddings]
+    EMB --> FUSION[Late Fusion Layer]
+    FUSION --> MLP[Classification Head]
+    MLP --> PROB[Malignancy Probability]
+    end
+
+    subgraph "Output & Explainability"
+    MASK --> VIS[Visual Overlay]
+    ABCD --> REP[Clinical Report]
+    PROB --> REP
+    PROB --> TTA[Uncertainty (TTA)]
+    end
+
+    style IMG fill:#f9f,stroke:#333,stroke-width:2px
+    style MASK fill:#bbf,stroke:#333,stroke-width:2px
+    style PROB fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
 ---
 
-## � Directory Structure
+## 🌟 Key Features at a Glance
+
+| Feature | Description | Technology |
+| :--- | :--- | :--- |
+| **🗡️ The Scalpel** | Pixel-perfect lesion isolation. | **U-Net** + ResNet34 |
+| **⚛️ The Fusion** | Multimodal diagnosis (Image + Metadata). | **EfficientNet** + MLP |
+| **📝 AI Scribe** | Auto-generates clinical notes. | **BLIP** (Vision-Language) |
+| **⚖️ Equity Engine** | Detects skin tone bias (ITA Score). | **CIELab** Color Analysis |
+| **🔍 XAI Suite** | Real-time ABCD Rule quantification. | **OpenCV** Geometry |
+| **🛡️ Safety Nets** | Blur detection & Uncertainty estimation. | **Laplacian** + **TTA** |
+
+---
+
+## 📊 Clinical Validation Metrics
+
+The system was rigorously evaluated using the **"Iron Curtain"** split protocol (Stratified GroupKFold) to ensure zero patient leakage.
+
+<div align="center">
+
+| Metric | Performance | Clinical Significance |
+| :--- | :---: | :--- |
+| **AUC-ROC** | **0.965** | Excellent discrimination between benign/malignant. |
+| **Sensitivity** | **94.2%** | Minimizes missed melanomas (False Negatives). |
+| **Specificity** | **88.5%** | Reduces unnecessary biopsies (False Positives). |
+| **Dice Score** | **0.92** | High-fidelity lesion boundary detection. |
+
+</div>
+
+---
+
+## �️ Installation & Deployment
+
+<details>
+<summary><b>🐳 Option 1: Docker (Recommended)</b></summary>
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/MedicoMrityunjay/DermaSentinel_AI.git
+cd DermaSentinel_AI
+
+# 2. Build the container
+docker build -t dermasentinel .
+
+# 3. Run (Port 7860)
+docker run -p 7860:7860 dermasentinel
+```
+</details>
+
+<details>
+<summary><b>🐍 Option 2: Local Python Environment</b></summary>
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Run the server
+python -m uvicorn main_server:app --reload --port 7860
+```
+</details>
+
+---
+
+## 📂 Repository Structure
 
 ```text
 DermaSentinel_AI/
-├── core/
-│   ├── models/          # PyTorch model definitions (U-Net, EfficientNet)
-│   └── database.py      # SQLAlchemy database configuration
-├── static/              # Frontend assets (HTML, CSS, JS)
-├── main_server.py       # FastAPI backend and inference pipeline
-├── Dockerfile           # Container configuration
-├── requirements.txt     # Python dependencies
-└── README.md            # Project documentation
+├── 🧠 core/
+│   ├── models/          # PyTorch Architectures (Scalpel, Fusion)
+│   ├── engine/          # Training Loops & Validation
+│   └── database.py      # SQLite/SQLAlchemy ORM
+├── 🎨 static/           # Frontend (Glassmorphism UI, JS, CSS)
+├── 🚀 main_server.py    # FastAPI Inference Engine
+├── 🐳 Dockerfile        # Production Container Config
+└── 📄 requirements.txt  # Pinned Dependencies
 ```
 
 ---
 
-## �💾 Data
+## ⚖️ Equity & Fairness
 
-### Training Datasets
-The models were trained on a curated combination of public datasets:
-1.  **ISIC 2018 Task 1**: Lesion Boundary Segmentation (2,594 images). Used for training the **Scalpel** (U-Net).
-2.  **SIIM-ISIC 2020**: Melanoma Classification (33,126 images). Used for training the **Fusion** (EfficientNet) classifier.
+DermaSentinel includes a dedicated **Equity Engine** to address racial bias in dermatological AI.
 
-### "Iron Curtain" Split Protocol
-To ensure zero patient leakage and robust evaluation, we implemented a **Stratified GroupKFold** split:
-*   **Grouping**: Samples were grouped by `patient_id` to ensure images from the same patient never appear in both train and validation sets.
-*   **Stratification**: Splits were stratified by target label (benign/malignant) to maintain class balance.
-
-*Note: The raw datasets are not included in this repository due to size and licensing. They can be downloaded from the [ISIC Archive](https://www.isic-archive.com/).*
+*   **ITA Calculation**: Automatically computes the *Individual Typology Angle* to classify skin phenotype (Fitzpatrick I-VI).
+*   **Bias Warning**: If the system detects **Type V or VI** (Dark Skin), it triggers a warning: *"High melanin content detected. Segmentation contrast may be reduced."* This ensures clinicians remain vigilant in underrepresented demographics.
 
 ---
 
-## 🧠 Technical Architecture
-
-DermaSentinel employs a **Dual-Gate** inference pipeline:
-
-### Gate 1: The Scalpel (Segmentation)
-*   **Architecture**: U-Net with a ResNet34 encoder (pre-trained on ImageNet).
-*   **Input**: 512x512 RGB Image.
-*   **Output**: Binary segmentation mask (Lesion vs. Background).
-*   **Purpose**: Isolates the lesion for ABCD analysis and calculates the "Mask Coverage" score.
-
-### Gate 2: The Fusion (Classification)
-*   **Architecture**: **EfficientNet-B3** (Image Feature Extractor) + **MLP** (Metadata Processor).
-*   **Fusion Strategy**: Late fusion. The 1536-dim image embedding is concatenated with a 32-dim metadata embedding (Age, Sex, Site) before the final classification head.
-*   **Uncertainty**: Uses **Test-Time Augmentation (TTA)**. The image is passed through the network 5 times with random augmentations (flips, rotations). The final probability is the mean, and uncertainty is the standard deviation.
-
----
-
-## 💻 Usage
-
-### 1. Running the Server (Docker)
-The recommended way to run DermaSentinel is via Docker.
-
-```bash
-docker build -t dermasentinel .
-docker run -p 7860:7860 dermasentinel
-```
-Access the UI at `http://localhost:7860`.
-
-### 2. Python API (Inference)
-You can also use the models programmatically for batch inference.
-
-```python
-import torch
-from main_server import scalpel, fusion, base_transforms
-
-# Load Image
-image = ... # PIL Image
-
-# Segmentation
-input_tensor = base_transforms(image=image_np)["image"].unsqueeze(0).to("cuda")
-mask = torch.sigmoid(scalpel(input_tensor))
-
-# Classification
-# ... (See main_server.py for full pipeline)
-```
-
----
-
-## 📊 Evaluation & Metrics
-
-The system was evaluated on a held-out test set generated via the Iron Curtain protocol.
-
-| Metric | Value | Description |
-| :--- | :--- | :--- |
-| **AUC-ROC** | **0.965** | Area Under the Receiver Operating Characteristic Curve |
-| **Sensitivity** | **94.2%** | Ability to correctly identify melanoma (True Positive Rate) |
-| **Specificity** | **88.5%** | Ability to correctly identify benign lesions (True Negative Rate) |
-| **Dice Score** | **0.92** | Segmentation overlap accuracy |
-| **Inference** | **< 1.5s** | Average end-to-end processing time on GPU |
-
----
-
-## 🐛 Issues
-
-Please open new issue threads specifying the issue with the codebase or report issues directly via the GitHub repository.
-
----
-
-## 📚 Citation
-
-If you use this code or model in your research, please cite:
+## � Citation
 
 ```bibtex
 @software{DermaSentinel2025,
@@ -131,20 +174,13 @@ If you use this code or model in your research, please cite:
 
 ---
 
-## ⚠️ Medical Disclaimer
+<div align="center">
 
-**DermaSentinel is a research tool and is NOT a certified medical device.**
-It is intended for **educational and clinical decision support purposes only**. It should never replace the professional judgment of a qualified dermatologist or pathologist. All diagnoses must be verified by standard clinical procedures (dermoscopy, biopsy, histopathology).
+### ⚠️ Medical Disclaimer
+*DermaSentinel is a research tool for **Educational & Clinical Decision Support** only.*
+*It is NOT a diagnostic device. Always verify findings with histopathology.*
 
----
+**Created by [MedicoMrityunjay](https://github.com/MedicoMrityunjay)**
+*Licensed under MIT*
 
-## 👨‍💻 Credits
-
-**Created by:** Mrityunjay (MedicoMrityunjay)
-*   *Lead Developer & Researcher*
-
-**Datasets Used:**
-*   ISIC 2018: Skin Lesion Analysis Towards Melanoma Detection
-*   ISIC 2019/2020: SIIM-ISIC Melanoma Classification
-
-**License:** MIT License
+</div>
