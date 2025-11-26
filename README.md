@@ -1,14 +1,3 @@
----
-title: DermaSentinel 🛡️
-emoji: 🛡️
-colorFrom: blue
-colorTo: cyan
-sdk: docker
-app_port: 7860
-pinned: true
-license: mit
----
-
 # DermaSentinel: Clinical-Grade AI for Melanoma Detection
 
 **Clinical-oriented melanoma detection and segmentation system with equity and explainability support.**
