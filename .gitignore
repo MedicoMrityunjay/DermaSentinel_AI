@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Project Specific
+data/
+weights/
+logs/
+*.db
+*.sqlite3
+.DS_Store
+*.log
+static/temp/
+report_*.pdf
+
+# Weights
+*.pth
+*.pt
+*.h5
+*.onnx
+
+# IDE
+.vscode/
+.idea/

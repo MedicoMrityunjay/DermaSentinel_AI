@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermaSentinel 🛡️ | AI Dermatologist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Visual FX Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+    <!-- 3D Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-r border-slate-200 dark:border-slate-700 hidden md:flex flex-col z-20 shadow-xl">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg">DS</div>
+                    <span class="font-bold text-xl tracking-tight text-slate-800 dark:text-white">DermaSentinel</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1 ml-11 uppercase tracking-wider">Clinical AI OS v3.0</p>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 rounded-xl font-medium transition-all hover:scale-105">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    New Diagnosis
+                </a>
+                
+                <div class="mt-8 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Recent Scans</div>
+                <div id="history-list" class="mt-2 space-y-2">
+                    <!-- History Items Injected Here -->
+                </div>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100 dark:border-slate-700">
+                <button id="theme-toggle" class="flex items-center gap-3 px-4 py-2 w-full text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    Toggle Theme
+                </button>
+                <div class="mt-4 text-[10px] text-center text-slate-400">
+                    Created by Mrityunjay
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-full relative z-10 overflow-y-auto overflow-x-hidden">
+            <!-- Mobile Header -->
+            <header class="md:hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 p-4 flex justify-between items-center sticky top-0 z-30">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-cyan-400"></div>
+                    <span class="font-bold text-slate-800 dark:text-white">DermaSentinel</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="theme-toggle-mobile" class="p-2 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg></button>
+                    <button id="menu-btn" class="p-2 text-slate-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Input -->
+                <div class="lg:col-span-5 space-y-6 anime-entry">
+                    <!-- Upload Card -->
+                    <div class="glass-card rounded-2xl p-1 relative overflow-hidden group" id="upload-card" data-tilt data-tilt-glare data-tilt-max="5">
+                        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 h-full transition-colors">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-bold text-slate-800 dark:text-white">Lesion Analysis</h2>
+                                <span id="status-badge" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-600">Ready</span>
+                            </div>
+
+                            <!-- Image Area -->
+                            <div class="relative aspect-square rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-brand-400 dark:hover:border-brand-500 transition-colors cursor-pointer overflow-hidden group-hover:shadow-inner" onclick="document.getElementById('file-upload').click()">
+                                
+                                <div id="upload-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 pointer-events-none">
+                                    <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span class="text-sm font-medium">Click to Upload Image</span>
+                                    <span class="text-[10px] mt-1 opacity-70">Supports JPG, PNG</span>
+                                </div>
+
+                                <div id="image-preview-container" class="hidden w-full h-full relative">
+                                    <img id="image-preview" class="w-full h-full object-cover" src="" alt="Lesion">
+                                    <img id="mask-overlay" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 pointer-events-none mix-blend-screen" src="" alt="Segmentation">
+                                    
+                                    <!-- Scanning Animation -->
+                                    <div id="scan-overlay" class="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/20 to-transparent hidden animate-scan pointer-events-none"></div>
+                                </div>
+                                
+                                <input type="file" id="file-upload" class="hidden" accept="image/*">
+                            </div>
+
+                            <!-- Controls -->
+                            <div class="mt-4 grid grid-cols-2 gap-3">
+                                <div class="col-span-2 flex items-center justify-between px-2">
+                                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 cursor-pointer">
+                                        <input type="checkbox" id="toggle-mask" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                        Show AI Segmentation
+                                    </label>
+                                    <button id="reset-btn" class="text-xs text-red-500 hover:text-red-600 font-medium" disabled>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Form -->
+                    <div class="glass-card rounded-2xl p-6 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wide">Patient Metadata</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">AGE</label>
+                                <input type="number" id="age" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all" placeholder="0-120" min="0" max="120">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">SEX</label>
+                                <select id="sex" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">SITE</label>
+                                <select id="site" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="head/neck">Head/Neck</option>
+                                    <option value="torso">Torso</option>
+                                    <option value="upper extremity">Upper Ext.</option>
+                                    <option value="lower extremity">Lower Ext.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="analyze-btn" class="w-full mt-6 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all transform hover:scale-[1.02] active:scale-95 btn-glow">
+                            Run AI Diagnosis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results -->
+                <div class="lg:col-span-7 space-y-6 anime-entry">
+                    <!-- Main Result Card -->
+                    <div class="glass-card rounded-2xl p-8 relative overflow-hidden" data-tilt data-tilt-glare data-tilt-max="3">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg class="w-32 h-32 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Primary Diagnosis</p>
+                                    <h1 id="diagnosis" class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">--</h1>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Confidence</p>
+                                    <div class="text-3xl font-mono font-bold text-brand-500" id="probability">0.0%</div>
+                                </div>
+                            </div>
+
+                            <!-- Probability Bar -->
+                            <div class="mt-6 w-full bg-slate-100 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+                                <div id="prob-bar" class="h-full bg-gradient-to-r from-green-400 to-red-500 w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
+                                <span>Benign</span>
+                                <span>Malignant</span>
+                            </div>
+
+                            <!-- Grid Stats -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                <div class="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                                    <div class="text-[10px] text-slate-500 uppercase">Case ID</div>
+                                    <div id="case-id" class="font-mono text-sm font-bold text-slate-700 dark:text-slate-200 truncate">N/A</div>
+                                </div>
+                                <div class="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                                    <div class="text-[10px] text-slate-500 uppercase">Skin Type</div>
+                                    <div id="skin-type-display" class="font-bold text-sm text-slate-700 dark:text-slate-200">--</div>
+                                </div>
+                                <div class="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                                    <div class="text-[10px] text-slate-500 uppercase">Uncertainty</div>
+                                    <div id="uncertainty-text" class="font-mono text-sm font-bold text-slate-700 dark:text-slate-200">--</div>
+                                </div>
+                                <div class="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                                    <div class="text-[10px] text-slate-500 uppercase">Bias Check</div>
+                                    <div id="bias-warning" class="hidden text-xs font-bold text-red-500 animate-pulse">⚠️ High Melanin</div>
+                                    <div id="bias-ok" class="text-xs font-bold text-green-500 hidden">✅ Low Risk</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- ABCD Chart -->
+                        <div class="glass-card rounded-2xl p-6 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700">
+                            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                ABCD Metrics
+                            </h3>
+                            <div class="h-48">
+                                <canvas id="abcdChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Notes -->
+                        <div class="glass-card rounded-2xl p-6 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+                            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                AI Clinical Note
+                            </h3>
+                            <div class="flex-1 bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-700 overflow-y-auto max-h-40">
+                                <p id="clinical-notes" class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 font-mono">
+                                    Waiting for analysis...
+                                </p>
+                            </div>
+                            <button id="download-btn" class="mt-4 w-full py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2" disabled>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download Report PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chat-window" class="hidden mb-4 w-80 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all origin-bottom-right transform scale-100">
+            <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-xs font-bold text-white">AI Consultant</span>
+                </div>
+                <button id="close-chat" class="text-white/80 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div id="chat-history" class="h-64 p-3 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-900/50">
+                <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-lg rounded-tl-none self-start text-slate-600 dark:text-slate-300 max-w-[90%] text-xs">
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">AI</span>
+                    Hello! Upload an image and ask me anything about the lesion.
+                </div>
+            </div>
+            <form id="chat-form" class="p-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <div class="flex gap-2">
+                    <input type="text" id="chat-input" class="flex-1 bg-slate-100 dark:bg-slate-900 border-none rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-brand-500" placeholder="Ask a question...">
+                    <button type="submit" class="p-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <button id="toggle-chat" class="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-full shadow-lg shadow-blue-500/40 flex items-center justify-center text-white hover:scale-110 transition-transform group">
+            <svg class="w-7 h-7 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div id="error-toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-xl z-50 hidden flex items-center gap-3 animate-bounce">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span id="error-msg" class="text-sm font-bold">Error</span>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
