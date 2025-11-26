@@ -47,7 +47,7 @@ graph TD
     end
 
     subgraph "Gate 1: The Scalpel 🗡️"
-    PRE --> UNET[U-Net (ResNet34)]
+    PRE --> UNET["U-Net (ResNet34)"]
     UNET --> MASK[Segmentation Mask]
     MASK --> ABCD[ABCD Analysis]
     end
@@ -64,7 +64,7 @@ graph TD
     MASK --> VIS[Visual Overlay]
     ABCD --> REP[Clinical Report]
     PROB --> REP
-    PROB --> TTA[Uncertainty (TTA)]
+    PROB --> TTA["Uncertainty (TTA)"]
     end
 
     style IMG fill:#f9f,stroke:#333,stroke-width:2px
