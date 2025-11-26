@@ -11,18 +11,6 @@ license: mit
 
 # DermaSentinel: Clinical-Grade AI for Melanoma Detection
 
-![DermaSentinel Banner](https://img.shields.io/badge/Status-Gold%20Master%20v3.0-gold?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red?style=for-the-badge&logo=pytorch)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.95%2B-009688?style=for-the-badge&logo=fastapi)
-![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker)
-
-**DermaSentinel** is a state-of-the-art, multimodal AI system designed to assist dermatologists in the early detection of melanoma. By fusing deep learning with clinical heuristics (ABCD rule), it provides not just a diagnosis, but a comprehensive, explainable, and equitable clinical assessment.
-
-This repository contains code to deploy the DermaSentinel inference engine, including the dual-gate architecture (Segmentation + Classification), AI Scribe, and Equity Engine.
-
----
-
 ## 🚀 Main Findings
 
 DermaSentinel bridges the gap between black-box AI and clinical practice by offering:
